@@ -21,7 +21,6 @@ jobs:
           go-version: stable
       - name: fix-go-mod
         run: go mod tidy && go mod vendor
-        working-directory: ctrfreak
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
