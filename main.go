@@ -1,16 +1,27 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"regexp"
 	"strings"
 
+	"github.com/charmbracelet/fang"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
 	"ctrfreak/cmd/ctrfreak"
 )
+
+var style = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("#FAFAFA")).
+	Background(lipgloss.Color("#7D56F4")).
+	PaddingTop(2).
+	PaddingLeft(4).
+	Width(22)
 
 type Config struct {
 	RootCmd         *cobra.Command
@@ -324,7 +335,7 @@ var testCmd = &cobra.Command{
 		if len(args) > 0 {
 			name = args[0]
 		}
-		color.Red("TESTING: Hello, %s!\n", name)
+		fmt.Println(style.Render("TESTING: Hello, %s!\n", name))
 	},
 }
 
@@ -338,13 +349,16 @@ func init() {
 		ExecName: Bold,
 		Flags:    Bold,
 	})
-	rootCmd.AddCommand(testCmd,ctrfreak.PsCommand())
+	rootCmd.AddCommand(testCmd, ctrfreak.PsCommand())
 }
 
 // main function executes the rootCmd
 func main() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+	// 	if err := rootCmd.Execute(); err != nil {
+	// 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+	// 		os.Exit(1)
+	// 	}
+	if err := fang.Execute(context.TODO(), rootCmd); err != nil {
 		os.Exit(1)
 	}
 }
