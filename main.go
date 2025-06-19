@@ -8,6 +8,8 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+
+	"ctrfreak/cmd/ctrfreak"
 )
 
 type Config struct {
@@ -336,7 +338,7 @@ func init() {
 		ExecName: Bold,
 		Flags:    Bold,
 	})
-	rootCmd.AddCommand(testCmd)
+	rootCmd.AddCommand(testCmd,ctrfreak.PsCommand())
 }
 
 // main function executes the rootCmd
