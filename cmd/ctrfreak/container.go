@@ -35,7 +35,10 @@ func psAction(cmd *cobra.Command, args []string) error {
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 4, 8, 4, ' ', 0)
-	fmt.Fprintln(w, "CONTAINER\tIMAGE\tRUNTIME\t")
+	_, err = fmt.Fprintln(w, "CONTAINER\tIMAGE\tRUNTIME\t")
+	if err != nil {
+		return err
+	}
 	for _, c := range containers {
 		info, err := c.Info(ctx, containerd.WithoutRefreshedMetadata)
 		if err != nil {

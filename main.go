@@ -63,7 +63,7 @@ func Init(cfg *Config) {
 	//
 	// Add extra line breaks for headings
 	//
-	if cfg.NoExtraNewlines == false {
+	if !cfg.NoExtraNewlines {
 		tpl = strings.NewReplacer(
 			"Usage:", "\nUsage:\n",
 			"Aliases:", "\nAliases:\n",
