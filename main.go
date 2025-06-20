@@ -42,7 +42,7 @@ var testCmd = &cobra.Command{
 
 // init function adds the testCmd to the rootCmd
 func init() {
-	rootCmd.AddCommand(testCmd, ctrfreak.PsCommand())
+	rootCmd.AddCommand(testCmd, ctrfreak.PsCommand(), ctrfreak.NamespaceCommand())
 }
 
 // main function executes the rootCmd
