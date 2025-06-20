@@ -338,7 +338,7 @@ func init() {
 		ExecName: Bold,
 		Flags:    Bold,
 	})
-	rootCmd.AddCommand(testCmd,ctrfreak.PsCommand())
+	rootCmd.AddCommand(testCmd, ctrfreak.PsCommand(), ctrfreak.NamespaceCommand())
 }
 
 // main function executes the rootCmd
