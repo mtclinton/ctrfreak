@@ -20,6 +20,7 @@ func NamespaceCommand() *cobra.Command {
 		SilenceErrors: true,
 	}
 	cmd.AddCommand(listCommand())
+	cmd.AddCommand(createCommand())
 	return cmd
 }
 
@@ -29,6 +30,19 @@ func listCommand() *cobra.Command {
 		Aliases:       []string{"list"},
 		Short:         "List containerd namespaces",
 		RunE:          listAction,
+		SilenceUsage:  true,
+		SilenceErrors: true,
+	}
+	return cmd
+}
+
+func listCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:           "c",
+		Aliases:       []string{"create"},
+		Short:         "create containerd namespace",
+		Args:          cobra.MinimumNArgs(1),
+		RunE:          createAction,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
@@ -68,4 +82,14 @@ func listAction(cmd *cobra.Command, args []string) error {
 		}
 	}
 	return tw.Flush()
+}
+
+func createAction(cmd *cobra.Command, args []string) error {
+	client, ctx, cancel, err := pkg.NewClient(cmd.Context(), "default", "unix:///run/containerd/containerd.sock")
+	if err != nil {
+		return err
+	}
+	defer cancel()
+	namespaces := client.NamespaceService()
+	return namespaces.Create(ctx, namespace, nil)
 }
