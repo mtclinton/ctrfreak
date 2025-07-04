@@ -36,7 +36,7 @@ func listCommand() *cobra.Command {
 	return cmd
 }
 
-func listCommand() *cobra.Command {
+func createCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "c",
 		Aliases:       []string{"create"},
@@ -91,5 +91,5 @@ func createAction(cmd *cobra.Command, args []string) error {
 	}
 	defer cancel()
 	namespaces := client.NamespaceService()
-	return namespaces.Create(ctx, namespace, nil)
+	return namespaces.Create(ctx, args[0], nil)
 }
