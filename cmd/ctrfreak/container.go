@@ -10,6 +10,17 @@ import (
 	"ctrfreak/pkg"
 )
 
+func ContainerCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:           "container",
+		Short:         "Manage containerd containers",
+		SilenceUsage:  true,
+		SilenceErrors: true,
+	}
+	cmd.AddCommand(PsCommand())
+	return cmd
+}
+
 func PsCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:           "ps",
