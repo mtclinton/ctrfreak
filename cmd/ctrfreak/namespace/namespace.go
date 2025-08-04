@@ -1,4 +1,4 @@
-package ctrfreak
+package namespace
 
 import (
 	"fmt"
