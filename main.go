@@ -26,23 +26,13 @@ var rootCmd = &cobra.Command{
 	Short: "Docker-compatible CLI for containerd",
 }
 
-// testCmd represents the test command
-var testCmd = &cobra.Command{
-	Use:   "test cli",
-	Short: "Tests that cli is working correctly",
-	Args:  cobra.MaximumNArgs(1), // Allows 0 or 1 argument
-	Run: func(cmd *cobra.Command, args []string) {
-		name := "World"
-		if len(args) > 0 {
-			name = args[0]
-		}
-		fmt.Println(style.Render("TESTING: Hello,", name, "!\n"))
-	},
-}
-
 // init function adds the testCmd to the rootCmd
 func init() {
-	rootCmd.AddCommand(testCmd, ctrfreak.PsCommand(), ctrfreak.ContainerCommand(), ctrfreak.NamespaceCommand())
+	rootCmd.AddCommand(
+	    ctrfreak.PsCommand(),
+	    ctrfreak.ContainerCommand(),
+	    ctrfreak.NamespaceCommand(),
+	)
 }
 
 // main function executes the rootCmd
