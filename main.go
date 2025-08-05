@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 
-	"ctrfreak/cmd/ctrfreak"
+	"ctrfreak/cmd/ctrfreak/container"
+	"ctrfreak/cmd/ctrfreak/namespace"
+
 )
 
 var style = lipgloss.NewStyle().
@@ -29,9 +30,9 @@ var rootCmd = &cobra.Command{
 // init function adds the testCmd to the rootCmd
 func init() {
 	rootCmd.AddCommand(
-	    ctrfreak.PsCommand(),
-	    ctrfreak.ContainerCommand(),
-	    ctrfreak.NamespaceCommand(),
+	    container.PsCommand(),
+	    container.ContainerCommand(),
+	    namespace.NamespaceCommand(),
 	)
 }
 
