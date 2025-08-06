@@ -34,6 +34,7 @@ func NewTask(ctx context.Context, client *containerd.Client, container container
 	if err != nil {
 		return nil, err
 	}
+
 	if spec.Linux != nil {
 		if len(spec.Linux.UIDMappings) != 0 {
 			opts = append(opts, containerd.WithUIDOwner(spec.Linux.UIDMappings[0].HostID))
@@ -45,7 +46,9 @@ func NewTask(ctx context.Context, client *containerd.Client, container container
 
 	var ioCreator cio.Creator
 	ioCreator = cio.NewCreator(append([]cio.Opt{cio.WithStreams(stdinC, os.Stdout, os.Stderr)}, ioOpts...)...)
+
 	t, err := container.NewTask(ctx, ioCreator, opts...)
+
 	if err != nil {
 		return nil, err
 	}
