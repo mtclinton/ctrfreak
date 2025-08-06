@@ -31,6 +31,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(
 	    container.PsCommand(),
+	    container.RunCommand(),
 	    container.ContainerCommand(),
 	    namespace.NamespaceCommand(),
 	)

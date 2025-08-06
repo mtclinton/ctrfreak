@@ -2,15 +2,20 @@ package container
 
 import (
 	"ctrfreak/pkg"
-	"fmt"
 	"errors"
+	"crypto/sha256"
+	"encoding/binary"
+	"encoding/hex"
+	"time"
 	"strconv"
 	containerd "github.com/containerd/containerd/v2/client"
-	"github.com/containerd/containerd/v2/pkg/oci"
 	"github.com/containerd/errdefs"
 	"github.com/containerd/log"
-	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/spf13/cobra"
+	"github.com/containerd/containerd/v2/pkg/oci"
+
+	"github.com/opencontainers/runtime-spec/specs-go"
+
 )
 
 
@@ -30,36 +35,36 @@ func RunCommand() *cobra.Command {
 }
 
 func runAction(cmd *cobra.Command, args []string) error {
+
 	client, ctx, cancel, err := pkg.NewClient(cmd.Context(), "default", "unix:///run/containerd/containerd.sock")
 	if err != nil {
 		return err
 	}
 	defer cancel()
 
-	id := args[0]
-	ref := args[0]
-	var opts  []oci.SpecOpts
-    var cOpts []containerd.NewContainerOpts
-    var spec  containerd.NewContainerOpts
-    fmt.Println(id)
+	pull := "missing"
 
-    fmt.Println("fuck")
+	ensured, err := pkg.EnsureImage(ctx, client, args[0], pull)
+	if err != nil {
+		return err
+	}
 
-    var image containerd.Image
-    i, err := client.ImageService().Get(ctx, ref)
-    if err != nil {
-        return err
-    }
-    fmt.Println("lol")
-    image = containerd.NewImage(client, i)
+	var (
+		opts  []oci.SpecOpts
+		cOpts []containerd.NewContainerOpts
+		spec  containerd.NewContainerOpts
+		id    = genID()
+	)
+    opts = append(opts, oci.WithDefaultSpec(), oci.WithDefaultUnixDevices)
+    opts = append(opts, oci.WithImageConfig(ensured.Image))
+	cOpts = append(cOpts,
+		containerd.WithImage(ensured.Image),
+		containerd.WithSnapshotter(ensured.Snapshotter),
+		containerd.WithNewSnapshot(id, ensured.Image),
+		containerd.WithImageStopSignal(ensured.Image, "SIGTERM"),
+	)
 
-    cOpts = append(cOpts,
-        containerd.WithImage(image),
-        containerd.WithImageConfigLabels(image),
-        containerd.WithSnapshotter("overlayfs"))
-    cOpts = append(cOpts, containerd.WithImageStopSignal(image, "SIGTERM"))
-
-	var s specs.Spec
+    var s specs.Spec
 	spec = containerd.WithSpec(&s, opts...)
 
 	cOpts = append(cOpts, spec)
@@ -68,6 +73,7 @@ func runAction(cmd *cobra.Command, args []string) error {
     if err != nil {
         return err
     }
+
 	rm, err := cmd.Flags().GetBool("rm")
 	if err != nil {
 		return err
@@ -86,7 +92,9 @@ func runAction(cmd *cobra.Command, args []string) error {
 		}()
 	}
 
-	task, err := pkg.NewTask(ctx, client, container, nil, nil)
+    topts := []containerd.NewTaskOpts{}
+
+	task, err := pkg.NewTask(ctx, client, container, nil, topts...)
 	if err != nil {
 		return err
 	}
@@ -127,4 +135,12 @@ func runAction(cmd *cobra.Command, args []string) error {
 		return errors.New(strconv.Itoa(int(code)))
 	}
 	return nil
+}
+
+func genID() string {
+	h := sha256.New()
+	if err := binary.Write(h, binary.LittleEndian, time.Now().UnixNano()); err != nil {
+		panic(err)
+	}
+	return hex.EncodeToString(h.Sum(nil))
 }
