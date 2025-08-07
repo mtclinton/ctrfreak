@@ -10,6 +10,7 @@ import (
 
 	"ctrfreak/cmd/ctrfreak/container"
 	"ctrfreak/cmd/ctrfreak/namespace"
+	"ctrfreak/cmd/ctrfreak/tasks"
 
 )
 
@@ -33,6 +34,7 @@ func init() {
 	    container.PsCommand(),
 	    container.RunCommand(),
 	    container.ContainerCommand(),
+	    tasks.TasksCommand(),
 	    namespace.NamespaceCommand(),
 	)
 }
