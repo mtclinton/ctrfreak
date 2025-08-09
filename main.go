@@ -11,6 +11,7 @@ import (
 	"ctrfreak/cmd/ctrfreak/container"
 	"ctrfreak/cmd/ctrfreak/namespace"
 	"ctrfreak/cmd/ctrfreak/tasks"
+	"ctrfreak/cmd/ctrfreak/compose"
 
 )
 
@@ -36,6 +37,7 @@ func init() {
 	    container.ContainerCommand(),
 	    tasks.TasksCommand(),
 	    namespace.NamespaceCommand(),
+	    compose.UpCommand(),
 	)
 }
 
