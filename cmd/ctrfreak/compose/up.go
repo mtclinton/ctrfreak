@@ -3,6 +3,7 @@ package compose
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/compose-spec/compose-go/v2/cli"
 	"log"
 	"context"
@@ -51,12 +52,12 @@ func upAction(cmd *cobra.Command, args []string) error {
 		log.Fatal(err)
 	}
 
-	// Use the MarshalYAML method to get YAML representation
-	projectYAML, err := project.MarshalYAML()
-	if err != nil {
-		log.Fatal(err)
+    if err := project.ForEachService([]string{}, func(name string, svc *types.ServiceConfig) error {
+		fmt.Println(svc.Image)
+		return nil
+	}); err != nil {
+		return err
 	}
 
-	fmt.Println(string(projectYAML))
     return nil
 }
